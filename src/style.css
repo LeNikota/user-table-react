@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+:root{
+  --bg-color: #F7F7F7;
+  --table-body-font-color: #ACACAC;
+  --table-header-font-color: #9EAAB4;
+  --accent-color: #0CB4F1;
+}
+
+*,
+*::before,
+*::after{
+  box-sizing: border-box;
+}
+
+body,
+input,
+button{
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+input,
+button,
+label{
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+body{
+  margin: 0;
+  background-color: #E5E5E5;
+}
+
+main{
+  margin: 100px auto;
+  max-width: 960px;
+}
+
+h1{
+  color: #333333;
+  font-size: 24px;
+  line-height: 28px;
+  margin: 12px 0 20px 27px;
+}
+
+.searchBar-container{
+  background-color: white;
+  padding: 12px 44px 16px 16px;
+  box-shadow: 0px 18px 15px rgba(148, 148, 148, 0.15);
+  border-radius: 7px;
+}
+
+.searchBar-container input{
+  width: 100%;
+  border-radius: 4px;
+  background: #ECEFF0;
+  caret-color: #9EAAB4;
+  color: #4F4F4F;
+  padding: 9px 31px;
+}
+
+.searchBar-container div{
+  position: relative;
+}
+
+.searchBar-container div::before{
+  position: absolute;
+  content: url("icon/search.svg");
+  z-index: 2;
+  top: 5px;
+  left: 3px;
+}
+
+.searchBar-container button{
+  background: none;
+  margin-top: 24px;
+  color: #4F4F4F;
+}
+
+.searchBar-container button img{
+  vertical-align: -3px;
+  margin-right: 4px;
+}
+
+.sorting{
+  margin-top: 72px;
+
+  font-size: 10px;
+  line-height: 14px;
+  color: #9EAAB4;
+}
+
+
+.sorting input{
+  appearance: none;
+}
+
+.sorting label{
+  text-decoration: 1.2px dashed underline;
+  text-underline-offset: 2px;
+}
+
+.sorting input:checked + label{
+  color: #333333;
+}
+
+.user-display{
+  background-color: #FFFFFF;
+  margin-top: 15px;
+  padding: 16px;
+  border-radius: 7px;
+}
+
+table{
+  width: 100%;
+  text-align: left;
+  border-collapse:collapse;
+}
+
+th,td{
+  padding: 0;
+}
+
+th{
+  color: #9EAAB4;
+  font-size: 10px;
+  line-height: 14px;
+  font-weight: 500;
+  padding-bottom: 22px;
+}
+
+td{
+  color: #ACACAC;
+  padding: 14px 0 20px 0;
+}
+
+td:nth-child(1){
+  color: #0CB4F1;
+  font-weight: 700;
+}
+
+tbody tr{
+  border-top: 1px solid #F7F7F7;
+}
