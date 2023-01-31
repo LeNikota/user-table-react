@@ -37,6 +37,40 @@ function SortingOptions(){
 }
 
 function UserDisplay(){
+  const [userArr, setUserArr] = useState([]);
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", "https://5ebbb8e5f2cfeb001697d05c.mockapi.io/users")
+  xhr.send()
+  xhr.responseType = 'json'
+  xhr.onload = function() {
+    const arr = xhr.response.map(e => {
+      return (
+        <tr key={e.id}>
+          <td>{e.username}</td>
+          <td>{e.email}</td>
+          <td>{convertDate(e.registration_date)}</td>
+          <td>{e.rating}</td>
+          <td><img src={cancel} alt="" width="18px" onClick={handleClick}/></td>
+        </tr>
+      )
+    })
+    setUserArr(arr);
+  }
+
+  const handleClick = () => {
+  }
+
+  const convertDate = (value) => {
+    function addZero(num) {
+      return num.toString().padStart(2, '0');
+    }
+    const date = new Date(value);
+    const month = addZero(date.getUTCMonth() + 1);
+    const day = addZero(date.getDay() + 1);
+    const year = addZero(date.getUTCFullYear());
+    return year + "." + month + "." + day;
+  }
+
   return (
     <div className="user-display">
       <table>
@@ -50,36 +84,12 @@ function UserDisplay(){
           </tr>
         </thead>
         <tbody>
-          <Users/>
+          {userArr}
         </tbody>
       </table>
     </div>
   )
 }
-
-function Users(){
-  const [userArr, setUserArr] = useState([]);
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", "https://5ebbb8e5f2cfeb001697d05c.mockapi.io/users")
-  xhr.send()
-  xhr.responseType = 'json'
-  xhr.onload = function() {
-    let arr = xhr.response.map(e => {
-      return (
-        <tr key={e.id}>
-          <td>{e.username}</td>
-          <td>{e.email}</td>
-          <td>{e.registration_date}</td>
-          <td>{e.rating}</td>
-          <td><img src={cancel} alt="" width="18px"/></td>
-        </tr>
-      )
-    })
-    setUserArr(arr);
-  }
-  return userArr;
-}
-
 
 function UserTable(){
   return(
