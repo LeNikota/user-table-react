@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import './style.css'
 import broom from './icon/clean.svg'
 import cancel from './icon/cancel.svg'
@@ -36,28 +36,44 @@ function SortingOptions(){
   )
 }
 
-function UserDisplay(){
-  const [userArr, setUserArr] = useState([]);
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", "https://5ebbb8e5f2cfeb001697d05c.mockapi.io/users")
-  xhr.send()
-  xhr.responseType = 'json'
-  xhr.onload = function() {
-    const arr = xhr.response.map(e => {
-      return (
-        <tr key={e.id}>
-          <td>{e.username}</td>
-          <td>{e.email}</td>
-          <td>{convertDate(e.registration_date)}</td>
-          <td>{e.rating}</td>
-          <td><img src={cancel} alt="" width="18px" onClick={handleClick}/></td>
-        </tr>
-      )
-    })
-    setUserArr(arr);
-  }
+function ModalWindow(props) {
+  return (
+    <div className={props.modalActive ? 'overlay active' : 'overlay'}>
+      <div className='modal-window'>
+        <p>Вы уверены, что хотите удалить пользователя?</p>
+        <div>
+          <button onClick={() => props.handleDelete()}>Да</button>
+          <button onClick={() => props.setModalActive(false)}>Нет</button>
+        </div>
+      </div>
+    </div>
+  )
+}
 
-  const handleClick = () => {
+function UserDisplay(props){
+  const [userArr, setUserArr] = useState([]);
+  const [modalActive, setModalActive] = useState(false);
+  let userIdRef = useRef(null);
+  if(!props.renderedOnce){
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", "https://5ebbb8e5f2cfeb001697d05c.mockapi.io/users")
+    xhr.send()
+    xhr.responseType = 'json'
+    xhr.onload = function() {
+      const arr = xhr.response.map(e => {
+        return (
+          <tr key={e.id}>
+            <td>{e.username}</td>
+            <td>{e.email}</td>
+            <td>{convertDate(e.registration_date)}</td>
+            <td>{e.rating}</td>
+            <td><img src={cancel} className="cancelBtn" alt="" width="18px" onClick={() => handleClick(e.id)}/></td>
+          </tr>
+        )
+      })
+      setUserArr(arr);
+      props.setRenderedOnce(true);
+    }
   }
 
   const convertDate = (value) => {
@@ -69,6 +85,17 @@ function UserDisplay(){
     const day = addZero(date.getDay() + 1);
     const year = addZero(date.getUTCFullYear());
     return year + "." + month + "." + day;
+  }
+
+  function handleClick(id) {
+    setModalActive(true);
+    userIdRef.current = id;
+  }
+
+  function handleDelete() {
+    const arr = userArr.filter(e => e.key !== userIdRef.current)
+    setUserArr(arr);
+    setModalActive(false);
   }
 
   return (
@@ -87,18 +114,28 @@ function UserDisplay(){
           {userArr}
         </tbody>
       </table>
+      <ModalWindow handleDelete={handleDelete} modalActive={modalActive} setModalActive={setModalActive}/>
     </div>
   )
 }
 
-function UserTable(){
-  return(
-    <>
-      <SearchBar/>
-      <SortingOptions/>
-      <UserDisplay/>
-    </>
-  )
+class UserTable extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      renderedOnce:false
+    }
+  }
+
+  render(){
+    return(
+      <>
+        <SearchBar/>
+        <SortingOptions/>
+        <UserDisplay renderedOnce={this.state.renderedOnce} setRenderedOnce={(value) => this.setState({renderedOnce: value})}/>
+      </>
+    )
+  }
 }
 
 

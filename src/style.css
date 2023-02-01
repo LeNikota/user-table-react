@@ -24,7 +24,8 @@ button{
 
 input,
 button,
-label{
+label,
+.cancelBtn{
   cursor: pointer;
   border: none;
   outline: none;
@@ -145,4 +146,63 @@ td:nth-child(1){
 
 tbody tr{
   border-top: 1px solid #F7F7F7;
+}
+
+.overlay{
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.4);
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.overlay.active{
+  opacity: 1;
+  pointer-events:all;
+}
+
+.modal-window{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  width: 353px;
+  height: 134px;
+  text-align: center;
+}
+
+.modal-window p{
+  margin: 0;
+  margin-top: 36px;
+}
+
+.modal-window button{
+  margin-top: 24px;
+  padding: 6px 36px;
+  background: #0CB4F1;
+  color: #FFFFFF;
+  border-radius: 3px;
+}
+
+.modal-window button:nth-child(1){
+  color: #828282;
+  background: #E0E0E0;
+  margin-right: 36px;
+}
+
+.modal-window button:hover{
+  opacity: 0.9;
+}
+
+.modal-window button:active{
+  opacity: 0.7;
+}
+
+.overlay{
+  
 }
