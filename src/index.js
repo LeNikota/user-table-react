@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './style.css'
 import broom from './icon/clean.svg'
 import cancel from './icon/cancel.svg'
@@ -50,11 +50,12 @@ function ModalWindow(props) {
   )
 }
 
-function UserDisplay(props){
+function UserDisplay(){
   const [userArr, setUserArr] = useState([]);
   const [modalActive, setModalActive] = useState(false);
   let userIdRef = useRef(null);
-  if(!props.renderedOnce){
+
+  useEffect(() => {
     const xhr = new XMLHttpRequest();
     xhr.open("GET", "https://5ebbb8e5f2cfeb001697d05c.mockapi.io/users")
     xhr.send()
@@ -72,10 +73,9 @@ function UserDisplay(props){
         )
       })
       setUserArr(arr);
-      props.setRenderedOnce(true);
     }
-  }
-
+  }, [])
+  
   const convertDate = (value) => {
     function addZero(num) {
       return num.toString().padStart(2, '0');
@@ -122,9 +122,7 @@ function UserDisplay(props){
 class UserTable extends React.Component{
   constructor(props){
     super(props);
-    this.state = {
-      renderedOnce:false
-    }
+    this.state = {}
   }
 
   render(){
@@ -132,7 +130,7 @@ class UserTable extends React.Component{
       <>
         <SearchBar/>
         <SortingOptions/>
-        <UserDisplay renderedOnce={this.state.renderedOnce} setRenderedOnce={(value) => this.setState({renderedOnce: value})}/>
+        <UserDisplay/>
       </>
     )
   }
