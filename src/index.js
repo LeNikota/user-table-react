@@ -10,13 +10,13 @@ function SearchBar(){
   const clearInput = () =>{
     setInputValue('')
 }
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     setInputValue(e.target.value)
 }
   return (
     <div className="searchBar-container">
       <div>
-        <input placeholder="Поиск по имени или e-mail" value={inputValue} onChange={handleInputChange}/>
+        <input placeholder="Поиск по имени или e-mail" value={inputValue} onChange={handleChange}/>
       </div>
       <button onClick={clearInput}>
         <img src={broom} alt=""/>
@@ -50,9 +50,32 @@ function ModalWindow(props) {
   )
 }
 
+function Pagination({userPerPage, totalUsers, changePage}) {
+  const pageNumbers = []
+
+  for (let i = 1; i <= Math.ceil(totalUsers/userPerPage); i++) {
+    pageNumbers.push(i);
+  }
+
+  return (
+    <div>
+      <ul className="pagination">
+        {
+          pageNumbers.map(number => {
+            return <li className="page-link" key={number} onClick={() => changePage(number)}>{number}</li>
+          })
+        }
+      </ul>
+    </div>
+  )
+}
+
 function UserDisplay(){
   const [userArr, setUserArr] = useState([]);
   const [modalActive, setModalActive] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const userPerPage = 5;
   let userIdRef = useRef(null);
 
   useEffect(() => {
@@ -98,24 +121,43 @@ function UserDisplay(){
     setModalActive(false);
   }
 
+  function changePage(pageNumber) {
+    setCurrentPage(pageNumber)
+  }
+
+  const lastUserIndex = currentPage * userPerPage;
+  const firstUserIndex = lastUserIndex - userPerPage;
+  const currentUsers = userArr.slice(firstUserIndex, lastUserIndex);
+
   return (
-    <div className="user-display">
-      <table>
-        <thead>
-          <tr>
-            <th>Имя пользователя</th>
-            <th>E-mail</th>
-            <th>Дата регистрации</th>
-            <th>Рейтинг</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {userArr}
-        </tbody>
-      </table>
-      <ModalWindow handleDelete={handleDelete} modalActive={modalActive} setModalActive={setModalActive}/>
-    </div>
+    <>
+      <div className="user-display">
+        <table>
+          <thead>
+            <tr>
+              <th>Имя пользователя</th>
+              <th>E-mail</th>
+              <th>Дата регистрации</th>
+              <th>Рейтинг</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentUsers}
+          </tbody>
+        </table>
+      </div>
+      <ModalWindow 
+        handleDelete={handleDelete}
+        modalActive={modalActive} 
+        setModalActive={setModalActive}
+      />
+      <Pagination 
+        userPerPage={userPerPage} 
+        totalUsers={userArr.length} 
+        changePage={changePage}
+      />
+    </>
   )
 }
 

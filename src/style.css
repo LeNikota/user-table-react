@@ -203,6 +203,17 @@ tbody tr{
   opacity: 0.7;
 }
 
-.overlay{
-  
+.pagination{
+  margin-top: 50px;
+  text-align: center;
+}
+
+.page-link{
+  background-color: #ffffff;
+  color: #828282;
+  padding: 15px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: inline;
+  margin: 0 25px;
 }
