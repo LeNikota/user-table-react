@@ -5,7 +5,7 @@ import './style.css'
 import broom from './icon/clean.svg'
 import cancel from './icon/cancel.svg'
 
-function SearchBar(){
+function SearchBar({}){
   const [inputValue, setInputValue] = useState('');
   const clearInput = () =>{
     setInputValue('')
@@ -84,18 +84,7 @@ function UserDisplay(){
     xhr.send()
     xhr.responseType = 'json'
     xhr.onload = function() {
-      const arr = xhr.response.map(e => {
-        return (
-          <tr key={e.id}>
-            <td>{e.username}</td>
-            <td>{e.email}</td>
-            <td>{convertDate(e.registration_date)}</td>
-            <td>{e.rating}</td>
-            <td><img src={cancel} className="cancelBtn" alt="" width="18px" onClick={() => handleClick(e.id)}/></td>
-          </tr>
-        )
-      })
-      setUserArr(arr);
+      setUserArr(xhr.response);
     }
   }, [])
   
@@ -143,7 +132,17 @@ function UserDisplay(){
             </tr>
           </thead>
           <tbody>
-            {currentUsers}
+          .userArr.map(e => {
+                return (
+                  <tr key={e.id}>
+                    <td>{e.username}</td>
+                    <td>{e.email}</td>
+                    <td>{convertDate(e.registration_date)}</td>
+                    <td>{e.rating}</td>
+                    <td><img src={cancel} className="cancelBtn" alt="" width="18px" onClick={() => handleClick(e.id)}/></td>
+                  </tr>
+                )
+              })
           </tbody>
         </table>
       </div>
