@@ -117,10 +117,10 @@ function UserDisplay() {
   }
 
   function handleDelete() {
-    const arr = userArr.filter((e) => e.key !== userIdRef.current);
+    const arr = userArr.filter((e) => e.id !== userIdRef.current);
     setUserArr(arr);
     setModalActive(false);
-  }
+}
 
   function changePage(pageNumber) {
     setCurrentPage(pageNumber);
@@ -128,7 +128,7 @@ function UserDisplay() {
 
   const lastUserIndex = currentPage * userPerPage;
   const firstUserIndex = lastUserIndex - userPerPage;
-  const currentUsers = userArr.slice(firstUserIndex, lastUserIndex);
+  const currentUsers = userArr.slice(firstUserIndex, lastUserIndex);//
 
   return (
     <>
@@ -144,25 +144,27 @@ function UserDisplay() {
             </tr>
           </thead>
           <tbody>
-            {userArr.map((e) => {
-              return (
-                <tr key={e.id}>
-                  <td>{e.username}</td>
-                  <td>{e.email}</td>
-                  <td>{convertDate(e.registration_date)}</td>
-                  <td>{e.rating}</td>
-                  <td>
-                    <img
-                      src={cancel}
-                      className="cancelBtn"
-                      alt=""
-                      width="18px"
-                      onClick={() => handleClick(e.id)}
-                    />
-                  </td>
-                </tr>
-              );
-            })}
+            {
+              userArr.map((e) => {
+                return (
+                  <tr key={e.id}>
+                    <td>{e.username}</td>
+                    <td>{e.email}</td>
+                    <td>{convertDate(e.registration_date)}</td>
+                    <td>{e.rating}</td>
+                    <td>
+                      <img
+                        src={cancel}
+                        className="cancelBtn"
+                        alt=""
+                        width="18px"
+                        onClick={() => handleClick(e.id)}
+                      />
+                    </td>
+                  </tr>
+                );
+              }).slice(firstUserIndex, lastUserIndex)
+            }
           </tbody>
         </table>
       </div>
