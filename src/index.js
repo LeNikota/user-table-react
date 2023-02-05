@@ -194,13 +194,13 @@ function UserDisplay() {
     userArrLength = arr.length;
     const lastUserIndex = currentPage * userPerPage;
     const firstUserIndex = lastUserIndex - userPerPage;
-    const currentUsers = arr.slice(firstUserIndex, lastUserIndex); //
+    const currentUsers = arr.slice(firstUserIndex, lastUserIndex);
+    if (userArrLength <= firstUserIndex && userArrLength !== 0 && userArrLength) {
+      setCurrentPage(currentPage - 1);
+    }
     return currentUsers;
   }
 
-  console.log("update"); //
-
-  console.log(searchTerm); //
   return (
     <>
       <SearchBar
