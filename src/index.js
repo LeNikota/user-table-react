@@ -5,25 +5,20 @@ import "./style.css";
 import broom from "./icon/clean.svg";
 import cancel from "./icon/cancel.svg";
 
-function SearchBar({setSearch}) {
-  const [inputValue, setInputValue] = useState("");
-  const clearInput = () => {
-    setInputValue("");
-  };
+function SearchBar({setSearchTerm, clearSearchFilter, searchTerm}) {
   const handleChange = (e) => {
-    //setInputValue(e.target.value);
-    setSearch(/*inputValue*/e.target.value.toLowerCase())
+    setSearchTerm(e.target.value.toLowerCase())
   };
   return (
     <div className="searchBar-container">
       <div>
         <input
           placeholder="Поиск по имени или e-mail"
-          //value={inputValue}
-          onChange={() => handleChange}
+          value={searchTerm}
+          onChange={(e) => handleChange(e)}
         />
       </div>
-      <button onClick={() => clearInput}>
+      <button onClick={() => clearSearchFilter()}>
         <img src={broom} alt="" />
         Очистить фильтр
       </button>
@@ -91,7 +86,7 @@ function UserDisplay() {
   const [userArr, setUserArr] = useState([]);
   const [modalActive, setModalActive] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [sorting, setSorting] = useState(null)
   const [sortingToggle, setSortingToggle] = useState(null)
   const userPerPage = 5;
@@ -118,7 +113,7 @@ function UserDisplay() {
     return year + "." + month + "." + day;
   };
 
-  function handleClick(id) {
+  function openModalWindow(id) {
     setModalActive(true);
     userIdRef.current = id;
   }
@@ -133,16 +128,22 @@ function UserDisplay() {
     setCurrentPage(pageNumber);
   }
 
+  function clearSearchFilter() {
+    setSorting(null);
+    setSortingToggle(null);
+    setSearchTerm("");
+  }
+
   const lastUserIndex = currentPage * userPerPage;
   const firstUserIndex = lastUserIndex - userPerPage;
   const currentUsers = userArr.slice(firstUserIndex, lastUserIndex);//
   console.log('update')//
 
-  console.log(sortingToggle,444)//
+  console.log(searchTerm)//
   return (
     <>
-      <SearchBar setSearch={(value) => setSearch(value)}/>
-      <SortingOptions setSorting={(value) => setSorting(value)} sortingToggle={sortingToggle} setSortingToggle={(value) => setSortingToggle(value)}/>
+      <SearchBar searchTerm={searchTerm} setSearchTerm={(value) => setSearchTerm(value)} clearSearchFilter={() => clearSearchFilter()}/>
+      <SortingOptions setSorting={(value) => setSorting(value)} setSortingToggle={(value) => setSortingToggle(value)} sortingToggle={sortingToggle}/>
       <div className="user-display">
         <table>
           <thead>
@@ -158,13 +159,9 @@ function UserDisplay() {
             {
               userArr
               .filter((e) => {
-                if(e.username.toLowerCase().includes(search)){
+                if(e.username.toLowerCase().includes(searchTerm) || e.email.toLowerCase().includes(searchTerm)){
                   return e;
                 }
-                if(e.email.toLowerCase().includes(search)){
-                  return e;
-                }
-                return e;
               })
               .sort((a, b) => {
                 if(sorting === "rating"){
@@ -172,7 +169,9 @@ function UserDisplay() {
                     ? (a.rating > b.rating ? 1 : -1)
                     : (a.rating < b.rating ? 1 : -1)
                 } else if(sorting === "registrationDate") {
-                  return Date.parse(a.registration_date) > Date.parse(b.registration_date) ? 1 : -1;
+                  return sortingToggle === "asc" 
+                    ? (Date.parse(a.registration_date) > Date.parse(b.registration_date) ? 1 : -1)
+                    : (Date.parse(a.registration_date) < Date.parse(b.registration_date) ? 1 : -1)
                 }
                 return 0;
               })
@@ -189,7 +188,7 @@ function UserDisplay() {
                         className="cancelBtn"
                         alt=""
                         width="18px"
-                        onClick={() => handleClick(e.id)}
+                        onClick={() => openModalWindow(e.id)}
                       />
                     </td>
                   </tr>
