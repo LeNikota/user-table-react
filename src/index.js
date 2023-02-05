@@ -26,9 +26,9 @@ function SearchBar({setSearchTerm, clearSearchFilter, searchTerm}) {
   );
 }
 
-function SortingOptions({setSorting, sortingToggle, setSortingToggle}) {
+function SortingOptions({setSortingMode, sortingToggle, setSortingToggle}) {
   const handleClick = (value) => {
-    setSorting(value)
+    setSortingMode(value)
     setSortingToggle(sortingToggle === "asc" ? "desc" : "asc");
   }
   return (
@@ -87,8 +87,8 @@ function UserDisplay() {
   const [modalActive, setModalActive] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sorting, setSorting] = useState(null)
-  const [sortingToggle, setSortingToggle] = useState(null)
+  const [sortingMode, setSortingMode] = useState(null);
+  const [sortingToggle, setSortingToggle] = useState(null);
   const userPerPage = 5;
   let userIdRef = useRef(null);
 
@@ -129,21 +129,70 @@ function UserDisplay() {
   }
 
   function clearSearchFilter() {
-    setSorting(null);
+    setSortingMode(null);
     setSortingToggle(null);
     setSearchTerm("");
   }
 
-  const lastUserIndex = currentPage * userPerPage;
-  const firstUserIndex = lastUserIndex - userPerPage;
-  const currentUsers = userArr.slice(firstUserIndex, lastUserIndex);//
+  function filterUserArr(arr) {
+    return arr.filter((e) => {
+      if(e.username.toLowerCase().includes(searchTerm) || e.email.toLowerCase().includes(searchTerm)){
+        return e;
+      }
+    })
+  }
+
+  function sortUserArr(arr) {
+    return arr.sort((a, b) => {
+      if(sortingMode === "rating"){
+        return sortingToggle === "asc"
+          ? (a.rating > b.rating ? 1 : -1)
+          : (a.rating < b.rating ? 1 : -1)
+      } else if(sortingMode === "registrationDate") {
+        return sortingToggle === "asc" 
+          ? (Date.parse(a.registration_date) > Date.parse(b.registration_date) ? 1 : -1)
+          : (Date.parse(a.registration_date) < Date.parse(b.registration_date) ? 1 : -1)
+      }
+      return 0;
+    })
+  }
+
+  function turnUserArrIntoJSX(arr) {
+    return arr.map((e) => {
+      return (
+        <tr key={e.id}>
+          <td>{e.username}</td>
+          <td>{e.email}</td>
+          <td>{convertDate(e.registration_date)}</td>
+          <td>{e.rating}</td>
+          <td>
+            <img
+              src={cancel}
+              className="cancelBtn"
+              alt=""
+              width="18px"
+              onClick={() => openModalWindow(e.id)}
+            />
+          </td>
+        </tr>
+      );
+    })
+  }
+
+  function paginateUserArr(arr) {
+    const lastUserIndex = currentPage * userPerPage;
+    const firstUserIndex = lastUserIndex - userPerPage;
+    const currentUsers = arr.slice(firstUserIndex, lastUserIndex);//
+    return currentUsers;
+  }
+
   console.log('update')//
 
   console.log(searchTerm)//
   return (
     <>
       <SearchBar searchTerm={searchTerm} setSearchTerm={(value) => setSearchTerm(value)} clearSearchFilter={() => clearSearchFilter()}/>
-      <SortingOptions setSorting={(value) => setSorting(value)} setSortingToggle={(value) => setSortingToggle(value)} sortingToggle={sortingToggle}/>
+      <SortingOptions setSortingMode={(value) => setSortingMode(value)} setSortingToggle={(value) => setSortingToggle(value)} sortingToggle={sortingToggle}/>
       <div className="user-display">
         <table>
           <thead>
@@ -157,44 +206,13 @@ function UserDisplay() {
           </thead>
           <tbody>
             {
-              userArr
-              .filter((e) => {
-                if(e.username.toLowerCase().includes(searchTerm) || e.email.toLowerCase().includes(searchTerm)){
-                  return e;
-                }
-              })
-              .sort((a, b) => {
-                if(sorting === "rating"){
-                  return sortingToggle === "asc"
-                    ? (a.rating > b.rating ? 1 : -1)
-                    : (a.rating < b.rating ? 1 : -1)
-                } else if(sorting === "registrationDate") {
-                  return sortingToggle === "asc" 
-                    ? (Date.parse(a.registration_date) > Date.parse(b.registration_date) ? 1 : -1)
-                    : (Date.parse(a.registration_date) < Date.parse(b.registration_date) ? 1 : -1)
-                }
-                return 0;
-              })
-              .map((e) => {
-                return (
-                  <tr key={e.id}>
-                    <td>{e.username}</td>
-                    <td>{e.email}</td>
-                    <td>{convertDate(e.registration_date)}</td>
-                    <td>{e.rating}</td>
-                    <td>
-                      <img
-                        src={cancel}
-                        className="cancelBtn"
-                        alt=""
-                        width="18px"
-                        onClick={() => openModalWindow(e.id)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })
-              .slice(firstUserIndex, lastUserIndex)
+              paginateUserArr(
+                turnUserArrIntoJSX(
+                  sortUserArr(
+                    filterUserArr(userArr)
+                  )
+                )
+              )
             }
           </tbody>
         </table>
