@@ -5,9 +5,9 @@ import "./style.css";
 import broom from "./icon/clean.svg";
 import cancel from "./icon/cancel.svg";
 
-function SearchBar({setSearchTerm, clearSearchFilter, searchTerm}) {
+function SearchBar({ setSearchTerm, clearSearchFilter, searchTerm }) {
   const handleChange = (e) => {
-    setSearchTerm(e.target.value.toLowerCase())
+    setSearchTerm(e.target.value.toLowerCase());
   };
   return (
     <div className="searchBar-container">
@@ -26,23 +26,30 @@ function SearchBar({setSearchTerm, clearSearchFilter, searchTerm}) {
   );
 }
 
-function SortingOptions({setSortingMode, sortingToggle, setSortingToggle}) {
+function SortingOptions({ setSortingMode, sortingToggle, setSortingToggle }) {
   const handleClick = (value) => {
-    setSortingMode(value)
+    setSortingMode(value);
     setSortingToggle(sortingToggle === "asc" ? "desc" : "asc");
-  }
+  };
   return (
     <div className="sorting">
       <span>Сортировка:</span>
-      <input id="registration-date" name="sort" type="radio"/>
-      <label for="registration-date" onClick={() => handleClick("registrationDate")}>Дата регистрации</label>
-      <input id="rating" name="sort" type="radio"/>
-      <label for="rating" onClick={() => handleClick("rating")}>Рейтинг</label>
+      <input id="registration-date" name="sort" type="radio" />
+      <label
+        for="registration-date"
+        onClick={() => handleClick("registrationDate")}
+      >
+        Дата регистрации
+      </label>
+      <input id="rating" name="sort" type="radio" />
+      <label for="rating" onClick={() => handleClick("rating")}>
+        Рейтинг
+      </label>
     </div>
   );
 }
 
-function ModalWindow({handleDelete, setModalActive, modalActive}) {
+function ModalWindow({ handleDelete, setModalActive, modalActive }) {
   return (
     <div className={modalActive ? "overlay active" : "overlay"}>
       <div className="modal-window">
@@ -101,7 +108,7 @@ function UserDisplay() {
     xhr.onload = function () {
       setUserArr(xhr.response);
     };
-}, []);
+  }, []);
 
   const convertDate = (value) => {
     function addZero(num) {
@@ -123,7 +130,7 @@ function UserDisplay() {
     const arr = userArr.filter((e) => e.id !== userIdRef.current);
     setUserArr(arr);
     setModalActive(false);
-}
+  }
 
   function changePage(pageNumber) {
     setCurrentPage(pageNumber);
@@ -137,20 +144,23 @@ function UserDisplay() {
 
   function filterUserArr(arr) {
     return arr.filter((e) => {
-      if(e.username.toLowerCase().includes(searchTerm) || e.email.toLowerCase().includes(searchTerm)){
+      if (
+        e.username.toLowerCase().includes(searchTerm) ||
+        e.email.toLowerCase().includes(searchTerm)
+      ) {
         return e;
       }
-    })
+    });
   }
 
   function sortUserArr(arr) {
     return arr.sort((a, b) => {
-      if(sortingMode === "rating"){
+      if (sortingMode === "rating") {
         return sortingToggle === "asc"
           ? (a.rating > b.rating ? 1 : -1)
           : (a.rating < b.rating ? 1 : -1)
-      } else if(sortingMode === "registrationDate") {
-        return sortingToggle === "asc" 
+      } else if (sortingMode === "registrationDate") {
+        return sortingToggle === "asc"
           ? (Date.parse(a.registration_date) > Date.parse(b.registration_date) ? 1 : -1)
           : (Date.parse(a.registration_date) < Date.parse(b.registration_date) ? 1 : -1)
       }
@@ -177,24 +187,32 @@ function UserDisplay() {
           </td>
         </tr>
       );
-    })
+    });
   }
 
   function paginateUserArr(arr) {
     userArrLength = arr.length;
     const lastUserIndex = currentPage * userPerPage;
     const firstUserIndex = lastUserIndex - userPerPage;
-    const currentUsers = arr.slice(firstUserIndex, lastUserIndex);//
+    const currentUsers = arr.slice(firstUserIndex, lastUserIndex); //
     return currentUsers;
   }
 
-  console.log('update')//
+  console.log("update"); //
 
-  console.log(searchTerm)//
+  console.log(searchTerm); //
   return (
     <>
-      <SearchBar searchTerm={searchTerm} setSearchTerm={(value) => setSearchTerm(value)} clearSearchFilter={() => clearSearchFilter()}/>
-      <SortingOptions setSortingMode={(value) => setSortingMode(value)} setSortingToggle={(value) => setSortingToggle(value)} sortingToggle={sortingToggle}/>
+      <SearchBar
+        searchTerm={searchTerm}
+        setSearchTerm={(value) => setSearchTerm(value)}
+        clearSearchFilter={() => clearSearchFilter()}
+      />
+      <SortingOptions
+        setSortingMode={(value) => setSortingMode(value)}
+        setSortingToggle={(value) => setSortingToggle(value)}
+        sortingToggle={sortingToggle}
+      />
       <div className="user-display">
         <table>
           <thead>
@@ -207,27 +225,21 @@ function UserDisplay() {
             </tr>
           </thead>
           <tbody>
-            {
-              paginateUserArr(
-                turnUserArrIntoJSX(
-                  sortUserArr(
-                    filterUserArr(userArr)
-                  )
-                )
-              )
-            }
+            {paginateUserArr(
+              turnUserArrIntoJSX(sortUserArr(filterUserArr(userArr)))
+            )}
           </tbody>
         </table>
       </div>
       <ModalWindow
         handleDelete={handleDelete}
-        modalActive={modalActive}
         setModalActive={setModalActive}
+        modalActive={modalActive}
       />
       <Pagination
+        changePage={changePage}
         userPerPage={userPerPage}
         totalUsers={userArrLength}
-        changePage={changePage}
       />
     </>
   );
