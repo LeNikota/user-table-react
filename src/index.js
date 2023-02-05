@@ -90,7 +90,8 @@ function UserDisplay() {
   const [sortingMode, setSortingMode] = useState(null);
   const [sortingToggle, setSortingToggle] = useState(null);
   const userPerPage = 5;
-  let userIdRef = useRef(null);
+  let userArrLength = 0;
+  const userIdRef = useRef(null);
 
   useEffect(() => {
     const xhr = new XMLHttpRequest();
@@ -180,6 +181,7 @@ function UserDisplay() {
   }
 
   function paginateUserArr(arr) {
+    userArrLength = arr.length;
     const lastUserIndex = currentPage * userPerPage;
     const firstUserIndex = lastUserIndex - userPerPage;
     const currentUsers = arr.slice(firstUserIndex, lastUserIndex);//
@@ -224,7 +226,7 @@ function UserDisplay() {
       />
       <Pagination
         userPerPage={userPerPage}
-        totalUsers={userArr.length}
+        totalUsers={userArrLength}
         changePage={changePage}
       />
     </>
