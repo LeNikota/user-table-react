@@ -5,24 +5,25 @@ import "./style.css";
 import broom from "./icon/clean.svg";
 import cancel from "./icon/cancel.svg";
 
-function SearchBar({}) {
+function SearchBar({setSearch}) {
   const [inputValue, setInputValue] = useState("");
   const clearInput = () => {
     setInputValue("");
   };
   const handleChange = (e) => {
-    setInputValue(e.target.value);
+    //setInputValue(e.target.value);
+    setSearch(/*inputValue*/e.target.value.toLowerCase())
   };
   return (
     <div className="searchBar-container">
       <div>
         <input
           placeholder="Поиск по имени или e-mail"
-          value={inputValue}
-          onChange={handleChange}
+          //value={inputValue}
+          onChange={() => handleChange}
         />
       </div>
-      <button onClick={clearInput}>
+      <button onClick={() => clearInput}>
         <img src={broom} alt="" />
         Очистить фильтр
       </button>
@@ -30,26 +31,30 @@ function SearchBar({}) {
   );
 }
 
-function SortingOptions() {
+function SortingOptions({setSorting, sortingToggle, setSortingToggle}) {
+  const handleClick = (value) => {
+    setSorting(value)
+    setSortingToggle(sortingToggle === "asc" ? "desc" : "asc");
+  }
   return (
     <div className="sorting">
       <span>Сортировка:</span>
-      <input id="registration-date" name="sort" checked type="radio" />
-      <label for="registration-date">Дата регистрации</label>
-      <input id="rating" name="sort" type="radio" />
-      <label for="rating">Рейтинг</label>
+      <input id="registration-date" name="sort" type="radio"/>
+      <label for="registration-date" onClick={() => handleClick("registrationDate")}>Дата регистрации</label>
+      <input id="rating" name="sort" type="radio"/>
+      <label for="rating" onClick={() => handleClick("rating")}>Рейтинг</label>
     </div>
   );
 }
 
-function ModalWindow(props) {
+function ModalWindow({handleDelete, setModalActive, modalActive}) {
   return (
-    <div className={props.modalActive ? "overlay active" : "overlay"}>
+    <div className={modalActive ? "overlay active" : "overlay"}>
       <div className="modal-window">
         <p>Вы уверены, что хотите удалить пользователя?</p>
         <div>
-          <button onClick={() => props.handleDelete()}>Да</button>
-          <button onClick={() => props.setModalActive(false)}>Нет</button>
+          <button onClick={() => handleDelete()}>Да</button>
+          <button onClick={() => setModalActive(false)}>Нет</button>
         </div>
       </div>
     </div>
@@ -87,6 +92,8 @@ function UserDisplay() {
   const [modalActive, setModalActive] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [sorting, setSorting] = useState(null)
+  const [sortingToggle, setSortingToggle] = useState(null)
   const userPerPage = 5;
   let userIdRef = useRef(null);
 
@@ -98,7 +105,7 @@ function UserDisplay() {
     xhr.onload = function () {
       setUserArr(xhr.response);
     };
-  }, []);
+}, []);
 
   const convertDate = (value) => {
     function addZero(num) {
@@ -106,7 +113,7 @@ function UserDisplay() {
     }
     const date = new Date(value);
     const month = addZero(date.getUTCMonth() + 1);
-    const day = addZero(date.getDay() + 1);
+    const day = addZero(date.getUTCDate() + 1);
     const year = addZero(date.getUTCFullYear());
     return year + "." + month + "." + day;
   };
@@ -129,9 +136,13 @@ function UserDisplay() {
   const lastUserIndex = currentPage * userPerPage;
   const firstUserIndex = lastUserIndex - userPerPage;
   const currentUsers = userArr.slice(firstUserIndex, lastUserIndex);//
+  console.log('update')//
 
+  console.log(sortingToggle,444)//
   return (
     <>
+      <SearchBar setSearch={(value) => setSearch(value)}/>
+      <SortingOptions setSorting={(value) => setSorting(value)} sortingToggle={sortingToggle} setSortingToggle={(value) => setSortingToggle(value)}/>
       <div className="user-display">
         <table>
           <thead>
@@ -145,7 +156,27 @@ function UserDisplay() {
           </thead>
           <tbody>
             {
-              userArr.map((e) => {
+              userArr
+              .filter((e) => {
+                if(e.username.toLowerCase().includes(search)){
+                  return e;
+                }
+                if(e.email.toLowerCase().includes(search)){
+                  return e;
+                }
+                return e;
+              })
+              .sort((a, b) => {
+                if(sorting === "rating"){
+                  return sortingToggle === "asc"
+                    ? (a.rating > b.rating ? 1 : -1)
+                    : (a.rating < b.rating ? 1 : -1)
+                } else if(sorting === "registrationDate") {
+                  return Date.parse(a.registration_date) > Date.parse(b.registration_date) ? 1 : -1;
+                }
+                return 0;
+              })
+              .map((e) => {
                 return (
                   <tr key={e.id}>
                     <td>{e.username}</td>
@@ -163,7 +194,8 @@ function UserDisplay() {
                     </td>
                   </tr>
                 );
-              }).slice(firstUserIndex, lastUserIndex)
+              })
+              .slice(firstUserIndex, lastUserIndex)
             }
           </tbody>
         </table>
@@ -191,8 +223,6 @@ class UserTable extends React.Component {
   render() {
     return (
       <>
-        <SearchBar />
-        <SortingOptions />
         <UserDisplay />
       </>
     );
