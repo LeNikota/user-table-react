@@ -2,94 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { useState, useEffect, useRef } from "react";
 import "./style.css";
-import broom from "./icon/clean.svg";
 import cancel from "./icon/cancel.svg";
+import SearchBar from "./SearchBar";
+import SortingOptions from "./SortingOptions";
+import ModalWindow from "./ModalWindow";
+import Pagination from "./Pagination";
 
-function SearchBar({ setSearchTerm, clearSearchFilter, searchTerm }) {
-  const handleChange = (e) => {
-    setSearchTerm(e.target.value.toLowerCase());
-  };
-  return (
-    <div className="searchBar-container">
-      <div>
-        <input
-          placeholder="Поиск по имени или e-mail"
-          value={searchTerm}
-          onChange={(e) => handleChange(e)}
-        />
-      </div>
-      <button onClick={() => clearSearchFilter()}>
-        <img src={broom} alt="" />
-        Очистить фильтр
-      </button>
-    </div>
-  );
-}
-
-function SortingOptions({ setSortingMode, sortingToggle, setSortingToggle }) {
-  const handleClick = (value) => {
-    setSortingMode(value);
-    setSortingToggle(sortingToggle === "asc" ? "desc" : "asc");
-  };
-  return (
-    <div className="sorting">
-      <span>Сортировка:</span>
-      <input id="registration-date" name="sort" type="radio" />
-      <label
-        for="registration-date"
-        onClick={() => handleClick("registrationDate")}
-      >
-        Дата регистрации
-      </label>
-      <input id="rating" name="sort" type="radio" />
-      <label for="rating" onClick={() => handleClick("rating")}>
-        Рейтинг
-      </label>
-    </div>
-  );
-}
-
-function ModalWindow({ handleDelete, setModalActive, modalActive }) {
-  return (
-    <div className={modalActive ? "overlay active" : "overlay"}>
-      <div className="modal-window">
-        <p>Вы уверены, что хотите удалить пользователя?</p>
-        <div>
-          <button onClick={() => handleDelete()}>Да</button>
-          <button onClick={() => setModalActive(false)}>Нет</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Pagination({ userPerPage, totalUsers, changePage }) {
-  const pageNumbers = [];
-
-  for (let i = 1; i <= Math.ceil(totalUsers / userPerPage); i++) {
-    pageNumbers.push(i);
-  }
-
-  return (
-    <div>
-      <ul className="pagination">
-        {pageNumbers.map((number) => {
-          return (
-            <li
-              className="page-link"
-              key={number}
-              onClick={() => changePage(number)}
-            >
-              {number}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-}
-
-function UserDisplay() {
+function UserTable() {
   const [userArr, setUserArr] = useState([]);
   const [modalActive, setModalActive] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -243,21 +162,6 @@ function UserDisplay() {
       />
     </>
   );
-}
-
-class UserTable extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
-  render() {
-    return (
-      <>
-        <UserDisplay />
-      </>
-    );
-  }
 }
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
