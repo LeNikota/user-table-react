@@ -1,5 +1,8 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
+import 'react-app-polyfill/ie9';
+import 'react-app-polyfill/ie11';
+import 'react-app-polyfill/stable';
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
 import { useState, useEffect, useRef } from "react";
 import "./style.css";
 import cancel from "./icon/cancel.svg";
@@ -121,7 +124,7 @@ function UserTable() {
   }
 
   return (
-    <>
+    <StrictMode>
       <SearchBar
         searchTerm={searchTerm}
         setSearchTerm={(value) => setSearchTerm(value)}
@@ -160,9 +163,9 @@ function UserTable() {
         userPerPage={userPerPage}
         totalUsers={userArrLength}
       />
-    </>
+    </StrictMode>
   );
 }
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<UserTable />);
+const root = createRoot(document.getElementById("root"));
+root.render(<UserTable/>);
