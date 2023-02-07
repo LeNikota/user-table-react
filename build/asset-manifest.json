@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/user-table-react/static/css/main.4b6d40ad.css",
+    "main.js": "/user-table-react/static/js/main.806ac387.js",
+    "static/media/clean.svg": "/user-table-react/static/media/clean.d259ece76fb759cd5e4f083a0a4e32b3.svg",
+    "index.html": "/user-table-react/index.html",
+    "static/media/search.svg": "/user-table-react/static/media/search.46a295f9e65c591ad74b.svg",
+    "static/media/cancel.svg": "/user-table-react/static/media/cancel.7cf13055e656b8653925553c019554be.svg",
+    "main.4b6d40ad.css.map": "/user-table-react/static/css/main.4b6d40ad.css.map",
+    "main.806ac387.js.map": "/user-table-react/static/js/main.806ac387.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.4b6d40ad.css",
+    "static/js/main.806ac387.js"
+  ]
+}
