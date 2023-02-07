@@ -27,7 +27,7 @@ function UserTable() {
     xhr.open("GET", "https://5ebbb8e5f2cfeb001697d05c.mockapi.io/users");
     xhr.send();
     xhr.responseType = "json";
-    xhr.onload = function () {
+    xhr.onload = () => {
       setUserArr(xhr.response);
     };
   }, []);

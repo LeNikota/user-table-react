@@ -219,3 +219,21 @@ tbody tr{
   display: inline;
   margin: 0 10px;
 }
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  .sorting input{
+    visibility: collapse;
+  }
+
+  body{
+    margin: 100px auto;
+    max-width: 960px;
+  }
+
+  .sorting label{
+    border-bottom: 1.2px dashed;
+  }
+
+  input::-ms-clear {  display: none; width : 0; height: 0; }
+  input::-ms-reveal {  display: none; width : 0; height: 0; }
+}
